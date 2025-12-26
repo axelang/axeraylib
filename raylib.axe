@@ -1,0 +1,1346 @@
+use external("raylib.h");
+
+opaque { 
+    Vector2, Vector3, Vector4, Matrix, Color, Rectangle, 
+    Image, Texture, RenderTexture, NPatchInfo, GlyphInfo, 
+    Font, Camera3D, Camera2D, Mesh, Shader, MaterialMap, Material, 
+    Transform, BoneInfo, Model, ModelAnimation, Ray, RayCollision, 
+    BoundingBox, Wave, AudioStream, Sound, Music 
+};
+
+pub def LIGHTGRAY(): Color { mut c: Color; unsafe { c.r = 200; c.g = 200; c.b = 200; c.a = 255; } return c; }
+pub def GRAY(): Color { mut c: Color; unsafe { c.r = 130; c.g = 130; c.b = 130; c.a = 255; } return c; }
+pub def DARKGRAY(): Color { mut c: Color; unsafe { c.r = 80; c.g = 80; c.b = 80; c.a = 255; } return c; }
+pub def YELLOW(): Color { mut c: Color; unsafe { c.r = 253; c.g = 249; c.b = 0; c.a = 255; } return c; }
+pub def GOLD(): Color { mut c: Color; unsafe { c.r = 255; c.g = 203; c.b = 0; c.a = 255; } return c; }
+pub def ORANGE(): Color { mut c: Color; unsafe { c.r = 255; c.g = 161; c.b = 0; c.a = 255; } return c; }
+pub def PINK(): Color { mut c: Color; unsafe { c.r = 255; c.g = 109; c.b = 194; c.a = 255; } return c; }
+pub def RED(): Color { mut c: Color; unsafe { c.r = 230; c.g = 41; c.b = 55; c.a = 255; } return c; }
+pub def MAROON(): Color { mut c: Color; unsafe { c.r = 190; c.g = 33; c.b = 55; c.a = 255; } return c; }
+pub def GREEN(): Color { mut c: Color; unsafe { c.r = 0; c.g = 228; c.b = 48; c.a = 255; } return c; }
+pub def LIME(): Color { mut c: Color; unsafe { c.r = 0; c.g = 158; c.b = 47; c.a = 255; } return c; }
+pub def DARKGREEN(): Color { mut c: Color; unsafe { c.r = 0; c.g = 117; c.b = 44; c.a = 255; } return c; }
+pub def SKYBLUE(): Color { mut c: Color; unsafe { c.r = 102; c.g = 191; c.b = 255; c.a = 255; } return c; }
+pub def BLUE(): Color { mut c: Color; unsafe { c.r = 0; c.g = 121; c.b = 241; c.a = 255; } return c; }
+pub def DARKBLUE(): Color { mut c: Color; unsafe { c.r = 0; c.g = 82; c.b = 172; c.a = 255; } return c; }
+pub def PURPLE(): Color { mut c: Color; unsafe { c.r = 200; c.g = 122; c.b = 255; c.a = 255; } return c; }
+pub def VIOLET(): Color { mut c: Color; unsafe { c.r = 135; c.g = 60; c.b = 190; c.a = 255; } return c; }
+pub def DARKPURPLE(): Color { mut c: Color; unsafe { c.r = 112; c.g = 31; c.b = 126; c.a = 255; } return c; }
+pub def BEIGE(): Color { mut c: Color; unsafe { c.r = 211; c.g = 176; c.b = 131; c.a = 255; } return c; }
+pub def BROWN(): Color { mut c: Color; unsafe { c.r = 127; c.g = 106; c.b = 79; c.a = 255; } return c; }
+pub def DARKBROWN(): Color { mut c: Color; unsafe { c.r = 76; c.g = 63; c.b = 47; c.a = 255; } return c; }
+pub def WHITE(): Color { mut c: Color; unsafe { c.r = 255; c.g = 255; c.b = 255; c.a = 255; } return c; }
+pub def BLACK(): Color { mut c: Color; unsafe { c.r = 0; c.g = 0; c.b = 0; c.a = 255; } return c; }
+pub def BLANK(): Color { mut c: Color; unsafe { c.r = 0; c.g = 0; c.b = 0; c.a = 0; } return c; }
+pub def MAGENTA(): Color { mut c: Color; unsafe { c.r = 255; c.g = 0; c.b = 255; c.a = 255; } return c; }
+pub def RAYWHITE(): Color { mut c: Color; unsafe { c.r = 245; c.g = 245; c.b = 245; c.a = 255; } return c; }
+
+[symbol: "InitWindow"]
+pub extern def init_window(width: i32, height: i32, title: ref char);
+
+[symbol: "CloseWindow"]
+pub extern def close_window();
+
+[symbol: "WindowShouldClose"]
+pub extern def window_should_close(): bool;
+
+[symbol: "IsWindowReady"]
+pub extern def is_window_ready(): bool;
+
+[symbol: "IsWindowFullscreen"]
+pub extern def is_window_fullscreen(): bool;
+
+[symbol: "IsWindowHidden"]
+pub extern def is_window_hidden(): bool;
+
+[symbol: "IsWindowMinimized"]
+pub extern def is_window_minimized(): bool;
+
+[symbol: "IsWindowMaximized"]
+pub extern def is_window_maximized(): bool;
+
+[symbol: "IsWindowFocused"]
+pub extern def is_window_focused(): bool;
+
+[symbol: "IsWindowResized"]
+pub extern def is_window_resized(): bool;
+
+[symbol: "IsWindowState"]
+pub extern def is_window_state(flag: u32): bool;
+
+[symbol: "SetWindowState"]
+pub extern def set_window_state(flags: u32);
+
+[symbol: "ClearWindowState"]
+pub extern def clear_window_state(flags: u32);
+
+[symbol: "ToggleFullscreen"]
+pub extern def toggle_fullscreen();
+
+[symbol: "ToggleBorderlessWindowed"]
+pub extern def toggle_borderless_windowed();
+[symbol: "MaximizeWindow"]
+pub extern def maximize_window();
+
+[symbol: "MinimizeWindow"]
+pub extern def minimize_window();
+
+[symbol: "RestoreWindow"]
+pub extern def restore_window();
+
+[symbol: "SetWindowTitle"]
+pub extern def set_window_title(title: ref char);
+
+[symbol: "SetWindowPosition"]
+pub extern def set_window_position(x: i32, y: i32);
+
+[symbol: "SetWindowMonitor"]
+pub extern def set_window_monitor(monitor: i32);
+
+[symbol: "SetWindowMinSize"]
+pub extern def set_window_min_size(width: i32, height: i32);
+
+[symbol: "SetWindowMaxSize"]
+pub extern def set_window_max_size(width: i32, height: i32);
+
+[symbol: "SetWindowSize"]
+pub extern def set_window_size(width: i32, height: i32);
+
+[symbol: "SetWindowOpacity"]
+pub extern def set_window_opacity(opacity: f32);
+
+[symbol: "SetWindowFocused"]
+pub extern def set_window_focused();
+
+[symbol: "GetWindowHandle"]
+pub extern def get_window_handle(): usize;
+
+[symbol: "GetScreenWidth"]
+pub extern def get_screen_width(): i32;
+
+[symbol: "GetScreenHeight"]
+pub extern def get_screen_height(): i32;
+
+[symbol: "GetRenderWidth"]
+pub extern def get_render_width(): i32;
+
+[symbol: "GetRenderHeight"]
+pub extern def get_render_height(): i32;
+
+[symbol: "GetMonitorCount"]
+pub extern def get_monitor_count(): i32;
+
+[symbol: "GetCurrentMonitor"]
+pub extern def get_current_monitor(): i32;
+
+[symbol: "GetMonitorPosition"]
+pub extern def get_monitor_position(monitor: i32): Vector2;
+
+[symbol: "GetMonitorWidth"]
+pub extern def get_monitor_width(monitor: i32): i32;
+
+[symbol: "GetMonitorHeight"]
+pub extern def get_monitor_height(monitor: i32): i32;
+
+[symbol: "GetMonitorPhysicalWidth"]
+pub extern def get_monitor_physical_width(monitor: i32): i32;
+
+[symbol: "GetMonitorPhysicalHeight"]
+pub extern def get_monitor_physical_height(monitor: i32): i32;
+
+[symbol: "GetMonitorRefreshRate"]
+pub extern def get_monitor_refresh_rate(monitor: i32): i32;
+
+[symbol: "GetWindowPosition"]
+pub extern def get_window_position(): Vector2;
+
+[symbol: "GetWindowScaleDPI"]
+pub extern def get_window_scale_dpi(): Vector2;
+
+[symbol: "GetMonitorName"]
+pub extern def get_monitor_name(monitor: i32): ref char;
+
+[symbol: "SetClipboardText"]
+pub extern def set_clipboard_text(text: ref char);
+
+[symbol: "GetClipboardText"]
+pub extern def get_clipboard_text(): ref char;
+
+[symbol: "EnableEventWaiting"]
+pub extern def enable_event_waiting();
+
+[symbol: "DisableEventWaiting"]
+pub extern def disable_event_waiting();
+
+[symbol: "SetTargetFPS"]
+pub extern def set_target_fps(fps: i32);
+
+[symbol: "GetFrameTime"]
+pub extern def get_frame_time(): f32;
+
+[symbol: "GetTime"]
+pub extern def get_time(): f64;
+
+[symbol: "GetFPS"]
+pub extern def get_fps(): i32;
+
+[symbol: "ClearBackground"]
+pub extern def clear_background(color: Color);
+
+[symbol: "BeginDrawing"]
+pub extern def begin_drawing();
+
+[symbol: "EndDrawing"]
+pub extern def end_drawing();
+
+[symbol: "BeginMode2D"]
+pub extern def begin_mode_2d(camera: Camera2D);
+
+[symbol: "EndMode2D"]
+pub extern def end_mode_2d();
+
+[symbol: "BeginMode3D"]
+pub extern def begin_mode_3d(camera: Camera3D);
+
+[symbol: "EndMode3D"]
+pub extern def end_mode_3d();
+
+[symbol: "BeginTextureMode"]
+pub extern def begin_texture_mode(target: RenderTexture);
+
+[symbol: "EndTextureMode"]
+pub extern def end_texture_mode();
+
+[symbol: "BeginShaderMode"]
+pub extern def begin_shader_mode(shader: Shader);
+
+[symbol: "EndShaderMode"]
+pub extern def end_shader_mode();
+
+[symbol: "BeginBlendMode"]
+pub extern def begin_blend_mode(mode: i32);
+
+[symbol: "EndBlendMode"]
+pub extern def end_blend_mode();
+
+[symbol: "BeginScissorMode"]
+pub extern def begin_scissor_mode(x: i32, y: i32, width: i32, height: i32);
+
+[symbol: "EndScissorMode"]
+pub extern def end_scissor_mode();
+
+[symbol: "GetMouseRay"]
+pub extern def get_mouse_ray(mouse_position: Vector2, camera: Camera3D): Ray;
+
+[symbol: "GetCameraMatrix"]
+pub extern def get_camera_matrix(camera: Camera3D): Matrix;
+
+[symbol: "GetCameraMatrix2D"]
+pub extern def get_camera_matrix_2d(camera: Camera2D): Matrix;
+
+[symbol: "GetWorldToScreen"]
+pub extern def get_world_to_screen(position: Vector3, camera: Camera3D): Vector2;
+
+[symbol: "GetScreenToWorld2D"]
+pub extern def get_screen_to_world_2d(position: Vector2, camera: Camera2D): Vector2;
+
+[symbol: "GetWorldToScreenEx"]
+pub extern def get_world_to_screen_ex(position: Vector3, camera: Camera3D, width: i32, height: i32): Vector2;
+
+[symbol: "GetWorldToScreen2D"]
+pub extern def get_world_to_screen_2d(position: Vector2, camera: Camera2D): Vector2;
+
+[symbol: "IsKeyPressed"]
+pub extern def is_key_pressed(key: i32): bool;
+
+[symbol: "IsKeyPressedRepeat"]
+pub extern def is_key_pressed_repeat(key: i32): bool;
+
+[symbol: "IsKeyDown"]
+pub extern def is_key_down(key: i32): bool;
+
+[symbol: "IsKeyReleased"]
+pub extern def is_key_released(key: i32): bool;
+
+[symbol: "IsKeyUp"]
+pub extern def is_key_up(key: i32): bool;
+
+[symbol: "GetKeyPressed"]
+pub extern def get_key_pressed(): i32;
+
+[symbol: "GetCharPressed"]
+pub extern def get_char_pressed(): i32;
+
+[symbol: "SetExitKey"]
+pub extern def set_exit_key(key: i32);
+
+[symbol: "IsMouseButtonPressed"]
+pub extern def is_mouse_button_pressed(button: i32): bool;
+
+[symbol: "IsMouseButtonDown"]
+pub extern def is_mouse_button_down(button: i32): bool;
+
+[symbol: "IsMouseButtonReleased"]
+pub extern def is_mouse_button_released(button: i32): bool;
+
+[symbol: "IsMouseButtonUp"]
+pub extern def is_mouse_button_up(button: i32): bool;
+
+[symbol: "GetMouseX"]
+pub extern def get_mouse_x(): i32;
+
+[symbol: "GetMouseY"]
+pub extern def get_mouse_y(): i32;
+
+[symbol: "GetMousePosition"]
+pub extern def get_mouse_position(): Vector2;
+
+[symbol: "GetMouseDelta"]
+pub extern def get_mouse_delta(): Vector2;
+
+[symbol: "SetMousePosition"]
+pub extern def set_mouse_position(x: i32, y: i32);
+
+[symbol: "SetMouseOffset"]
+pub extern def set_mouse_offset(offset_x: i32, offset_y: i32);
+
+[symbol: "SetMouseScale"]
+pub extern def set_mouse_scale(scale_x: f32, scale_y: f32);
+
+[symbol: "GetMouseWheelMove"]
+pub extern def get_mouse_wheel_move(): f32;
+
+[symbol: "GetMouseWheelMoveV"]
+pub extern def get_mouse_wheel_move_v(): Vector2;
+
+[symbol: "SetMouseCursor"]
+pub extern def set_mouse_cursor(cursor: i32);
+
+[symbol: "GetTouchX"]
+pub extern def get_touch_x(): i32;
+
+[symbol: "GetTouchY"]
+pub extern def get_touch_y(): i32;
+
+[symbol: "GetTouchPosition"]
+pub extern def get_touch_position(index: i32): Vector2;
+
+[symbol: "GetTouchPointId"]
+pub extern def get_touch_point_id(index: i32): i32;
+
+[symbol: "GetTouchPointCount"]
+pub extern def get_touch_point_count(): i32;
+
+[symbol: "SetGesturesEnabled"]
+pub extern def set_gestures_enabled(flags: u32);
+
+[symbol: "IsGestureDetected"]
+pub extern def is_gesture_detected(gesture: u32): bool;
+
+[symbol: "GetGestureDetected"]
+pub extern def get_gesture_detected(): i32;
+
+[symbol: "GetGestureHoldDuration"]
+pub extern def get_gesture_hold_duration(): f32;
+
+[symbol: "GetGestureDragVector"]
+pub extern def get_gesture_drag_vector(): Vector2;
+
+[symbol: "GetGestureDragAngle"]
+pub extern def get_gesture_drag_angle(): f32;
+
+[symbol: "GetGesturePinchVector"]
+pub extern def get_gesture_pinch_vector(): Vector2;
+
+[symbol: "GetGesturePinchAngle"]
+pub extern def get_gesture_pinch_angle(): f32;
+
+[symbol: "UpdateCamera"]
+pub extern def update_camera(camera: ref Camera3D, mode: i32);
+
+[symbol: "UpdateCameraPro"]
+pub extern def update_camera_pro(camera: ref Camera3D, movement: Vector3, rotation: Vector3, zoom: f32);
+
+[symbol: "SetShapesTexture"]
+pub extern def set_shapes_texture(texture: Texture, source: Rectangle);
+
+[symbol: "DrawPixel"]
+pub extern def draw_pixel(pos_x: i32, pos_y: i32, color: Color);
+
+[symbol: "DrawPixelV"]
+pub extern def draw_pixel_v(position: Vector2, color: Color);
+
+[symbol: "DrawLine"]
+pub extern def draw_line(start_pos_x: i32, start_pos_y: i32, end_pos_x: i32, end_pos_y: i32, color: Color);
+
+[symbol: "DrawLineV"]
+pub extern def draw_line_v(start_pos: Vector2, end_pos: Vector2, color: Color);
+
+[symbol: "DrawLineEx"]
+pub extern def draw_line_ex(start_pos: Vector2, end_pos: Vector2, thick: f32, color: Color);
+
+[symbol: "DrawLineBezier"]
+pub extern def draw_line_bezier(start_pos: Vector2, end_pos: Vector2, thick: f32, color: Color);
+
+[symbol: "DrawCircle"]
+pub extern def draw_circle(center_x: i32, center_y: i32, radius: f32, color: Color);
+
+[symbol: "DrawCircleV"]
+pub extern def draw_circle_v(center: Vector2, radius: f32, color: Color);
+
+[symbol: "DrawCircleLines"]
+pub extern def draw_circle_lines(center_x: i32, center_y: i32, radius: f32, color: Color);
+
+[symbol: "DrawCircleLinesV"]
+pub extern def draw_circle_lines_v(center: Vector2, radius: f32, color: Color);
+
+[symbol: "DrawEllipse"]
+pub extern def draw_ellipse(center_x: i32, center_y: i32, radius_h: f32, radius_v: f32, color: Color);
+
+[symbol: "DrawEllipseLines"]
+pub extern def draw_ellipse_lines(center_x: i32, center_y: i32, radius_h: f32, radius_v: f32, color: Color);
+
+[symbol: "DrawRing"]
+pub extern def draw_ring(center: Vector2, inner_radius: f32, outer_radius: f32, start_angle: f32, end_angle: f32, segments: i32, color: Color);
+
+[symbol: "DrawRingLines"]
+pub extern def draw_ring_lines(center: Vector2, inner_radius: f32, outer_radius: f32, start_angle: f32, end_angle: f32, segments: i32, color: Color);
+
+[symbol: "DrawRectangle"]
+pub extern def draw_rectangle(pos_x: i32, pos_y: i32, width: i32, height: i32, color: Color);
+
+[symbol: "DrawRectangleV"]
+pub extern def draw_rectangle_v(position: Vector2, size: Vector2, color: Color);
+
+[symbol: "DrawRectangleRec"]
+pub extern def draw_rectangle_rec(rec: Rectangle, color: Color);
+
+[symbol: "DrawRectanglePro"]
+pub extern def draw_rectangle_pro(rec: Rectangle, origin: Vector2, rotation: f32, color: Color);
+
+[symbol: "DrawRectangleGradientV"]
+pub extern def draw_rectangle_gradient_v(pos_x: i32, pos_y: i32, width: i32, height: i32, color1: Color, color2: Color);
+
+[symbol: "DrawRectangleGradientH"]
+pub extern def draw_rectangle_gradient_h(pos_x: i32, pos_y: i32, width: i32, height: i32, color1: Color, color2: Color);
+
+[symbol: "DrawRectangleGradientEx"]
+pub extern def draw_rectangle_gradient_ex(rec: Rectangle, col1: Color, col2: Color, col3: Color, col4: Color);
+
+[symbol: "DrawRectangleLines"]
+pub extern def draw_rectangle_lines(pos_x: i32, pos_y: i32, width: i32, height: i32, color: Color);
+
+[symbol: "DrawRectangleLinesEx"]
+pub extern def draw_rectangle_lines_ex(rec: Rectangle, line_thick: f32, color: Color);
+
+[symbol: "DrawRectangleRounded"]
+pub extern def draw_rectangle_rounded(rec: Rectangle, roundness: f32, segments: i32, color: Color);
+
+[symbol: "DrawRectangleRoundedLines"]
+pub extern def draw_rectangle_rounded_lines(rec: Rectangle, roundness: f32, segments: i32, line_thick: f32, color: Color);
+
+[symbol: "DrawTriangle"]
+pub extern def draw_triangle(v1: Vector2, v2: Vector2, v3: Vector2, color: Color);
+
+[symbol: "DrawTriangleLines"]
+pub extern def draw_triangle_lines(v1: Vector2, v2: Vector2, v3: Vector2, color: Color);
+
+[symbol: "DrawPoly"]
+pub extern def draw_poly(center: Vector2, sides: i32, radius: f32, rotation: f32, color: Color);
+
+[symbol: "DrawPolyLines"]
+pub extern def draw_poly_lines(center: Vector2, sides: i32, radius: f32, rotation: f32, color: Color);
+
+[symbol: "DrawPolyLinesEx"]
+pub extern def draw_poly_lines_ex(center: Vector2, sides: i32, radius: f32, rotation: f32, line_thick: f32, color: Color);
+
+[symbol: "CheckCollisionRecs"]
+pub extern def check_collision_recs(rec1: Rectangle, rec2: Rectangle): bool;
+
+[symbol: "CheckCollisionCircles"]
+pub extern def check_collision_circles(center1: Vector2, radius1: f32, center2: Vector2, radius2: f32): bool;
+
+[symbol: "CheckCollisionCircleRec"]
+pub extern def check_collision_circle_rec(center: Vector2, radius: f32, rec: Rectangle): bool;
+
+[symbol: "CheckCollisionPointRec"]
+pub extern def check_collision_point_rec(point: Vector2, rec: Rectangle): bool;
+
+[symbol: "CheckCollisionPointCircle"]
+pub extern def check_collision_point_circle(point: Vector2, center: Vector2, radius: f32): bool;
+
+[symbol: "CheckCollisionPointTriangle"]
+pub extern def check_collision_point_triangle(point: Vector2, p1: Vector2, p2: Vector2, p3: Vector2): bool;
+
+[symbol: "GetCollisionRec"]
+pub extern def get_collision_rec(rec1: Rectangle, rec2: Rectangle): Rectangle;
+
+[symbol: "LoadImage"]
+pub extern def load_image(file_name: ref char): Image;
+
+[symbol: "LoadImageRaw"]
+pub extern def load_image_raw(file_name: ref char, width: i32, height: i32, format: i32, header_size: i32): Image;
+
+[symbol: "LoadImageSvg"]
+pub extern def load_image_svg(file_name_or_string: ref char, width: i32, height: i32): Image;
+
+[symbol: "LoadImageAnim"]
+pub extern def load_image_anim(file_name: ref char, frames: ref i32): Image;
+
+[symbol: "LoadImageFromMemory"]
+pub extern def load_image_from_memory(file_type: ref char, file_data: ref u8, data_size: i32): Image;
+
+[symbol: "LoadImageFromTexture"]
+pub extern def load_image_from_texture(texture: Texture): Image;
+
+[symbol: "LoadImageFromScreen"]
+pub extern def load_image_from_screen(): Image;
+
+[symbol: "IsImageReady"]
+pub extern def is_image_ready(image: Image): bool;
+
+[symbol: "UnloadImage"]
+pub extern def unload_image(image: Image);
+
+[symbol: "ExportImage"]
+pub extern def export_image(image: Image, file_name: ref char): bool;
+
+[symbol: "ExportImageToMemory"]
+pub extern def export_image_to_memory(image: Image, file_type: ref char, file_size: ref i32): ref u8;
+
+[symbol: "ExportImageAsCode"]
+pub extern def export_image_as_code(image: Image, file_name: ref char): bool;
+
+[symbol: "GenImageColor"]
+pub extern def gen_image_color(width: i32, height: i32, color: Color): Image;
+
+[symbol: "GenImageGradientLinear"]
+pub extern def gen_image_gradient_linear(width: i32, height: i32, direction: i32, start: Color, end: Color): Image;
+
+[symbol: "GenImageGradientRadial"]
+pub extern def gen_image_gradient_radial(width: i32, height: i32, density: f32, inner: Color, outer: Color): Image;
+
+[symbol: "GenImageGradientSquare"]
+pub extern def gen_image_gradient_square(width: i32, height: i32, density: f32, inner: Color, outer: Color): Image;
+
+[symbol: "GenImageChecked"]
+pub extern def gen_image_checked(width: i32, height: i32, checks_x: i32, checks_y: i32, col1: Color, col2: Color): Image;
+
+[symbol: "GenImageWhiteNoise"]
+pub extern def gen_image_white_noise(width: i32, height: i32, factor: f32): Image;
+
+[symbol: "GenImagePerlinNoise"]
+pub extern def gen_image_perlin_noise(width: i32, height: i32, offset_x: i32, offset_y: i32, scale: f32): Image;
+
+[symbol: "GenImageCellular"]
+pub extern def gen_image_cellular(width: i32, height: i32, tile_size: i32): Image;
+
+[symbol: "GenImageText"]
+pub extern def gen_image_text(width: i32, height: i32, text: ref char): Image;
+
+[symbol: "ImageCopy"]
+pub extern def image_copy(image: Image): Image;
+
+[symbol: "ImageFromImage"]
+pub extern def image_from_image(image: Image, rec: Rectangle): Image;
+
+[symbol: "ImageText"]
+pub extern def image_text(text: ref char, font_size: i32, color: Color): Image;
+
+[symbol: "ImageTextEx"]
+pub extern def image_text_ex(font: Font, text: ref char, font_size: f32, spacing: f32, tint: Color): Image;
+
+[symbol: "ImageFormat"]
+pub extern def image_format(image: ref Image, new_format: i32);
+
+[symbol: "ImageToPOT"]
+pub extern def image_to_pot(image: ref Image, fill: Color);
+
+[symbol: "ImageCrop"]
+pub extern def image_crop(image: ref Image, crop: Rectangle);
+
+[symbol: "ImageAlphaCrop"]
+pub extern def image_alpha_crop(image: ref Image, threshold: f32);
+
+[symbol: "ImageAlphaClear"]
+pub extern def image_alpha_clear(image: ref Image, color: Color, threshold: f32);
+
+[symbol: "ImageAlphaMask"]
+pub extern def image_alpha_mask(image: ref Image, alpha_mask: Image);
+
+[symbol: "ImageAlphaPremultiply"]
+pub extern def image_alpha_premultiply(image: ref Image);
+
+[symbol: "ImageBlurGaussian"]
+pub extern def image_blur_gaussian(image: ref Image, blur_size: i32);
+
+[symbol: "ImageResize"]
+pub extern def image_resize(image: ref Image, new_width: i32, new_height: i32);
+
+[symbol: "ImageResizeNN"]
+pub extern def image_resize_nn(image: ref Image, new_width: i32, new_height: i32);
+
+[symbol: "ImageResizeCanvas"]
+pub extern def image_resize_canvas(image: ref Image, new_width: i32, new_height: i32, offset_x: i32, offset_y: i32, fill: Color);
+
+[symbol: "ImageMipmaps"]
+pub extern def image_mipmaps(image: ref Image);
+
+[symbol: "ImageDither"]
+pub extern def image_dither(image: ref Image, r_bpp: i32, g_bpp: i32, b_bpp: i32, a_bpp: i32);
+
+[symbol: "ImageFlipVertical"]
+pub extern def image_flip_vertical(image: ref Image);
+
+[symbol: "ImageFlipHorizontal"]
+pub extern def image_flip_horizontal(image: ref Image);
+
+[symbol: "ImageRotate"]
+pub extern def image_rotate(image: ref Image, degrees: i32);
+
+[symbol: "ImageRotateCW"]
+pub extern def image_rotate_cw(image: ref Image);
+
+[symbol: "ImageRotateCCW"]
+pub extern def image_rotate_ccw(image: ref Image);
+
+[symbol: "ImageColorTint"]
+pub extern def image_color_tint(image: ref Image, color: Color);
+
+[symbol: "ImageColorInvert"]
+pub extern def image_color_invert(image: ref Image);
+
+[symbol: "ImageColorGrayscale"]
+pub extern def image_color_grayscale(image: ref Image);
+
+[symbol: "ImageColorContrast"]
+pub extern def image_color_contrast(image: ref Image, contrast: f32);
+
+[symbol: "ImageColorBrightness"]
+pub extern def image_color_brightness(image: ref Image, brightness: i32);
+
+[symbol: "ImageColorReplace"]
+pub extern def image_color_replace(image: ref Image, color: Color, replace: Color);
+
+[symbol: "LoadImageColors"]
+pub extern def load_image_colors(image: Image): ref Color;
+
+[symbol: "LoadImagePalette"]
+pub extern def load_image_palette(image: Image, max_palette_size: i32, color_count: ref i32): ref Color;
+
+[symbol: "UnloadImageColors"]
+pub extern def unload_image_colors(colors: ref Color);
+
+[symbol: "UnloadImagePalette"]
+pub extern def unload_image_palette(colors: ref Color);
+
+[symbol: "GetImageAlphaBorder"]
+pub extern def get_image_alpha_border(image: Image, threshold: f32): Rectangle;
+
+[symbol: "GetImageColor"]
+pub extern def get_image_color(image: Image, x: i32, y: i32): Color;
+
+[symbol: "ImageClearBackground"]
+pub extern def image_clear_background(dst: ref Image, color: Color);
+
+[symbol: "ImageDrawPixel"]
+pub extern def image_draw_pixel(dst: ref Image, pos_x: i32, pos_y: i32, color: Color);
+
+[symbol: "ImageDrawPixelV"]
+pub extern def image_draw_pixel_v(dst: ref Image, position: Vector2, color: Color);
+
+[symbol: "ImageDrawLine"]
+pub extern def image_draw_line(dst: ref Image, start_pos_x: i32, start_pos_y: i32, end_pos_x: i32, end_pos_y: i32, color: Color);
+
+[symbol: "ImageDrawLineV"]
+pub extern def image_draw_line_v(dst: ref Image, start: Vector2, end: Vector2, color: Color);
+
+[symbol: "ImageDrawCircle"]
+pub extern def image_draw_circle(dst: ref Image, center_x: i32, center_y: i32, radius: i32, color: Color);
+
+[symbol: "ImageDrawCircleV"]
+pub extern def image_draw_circle_v(dst: ref Image, center: Vector2, radius: i32, color: Color);
+
+[symbol: "ImageDrawCircleLines"]
+pub extern def image_draw_circle_lines(dst: ref Image, center_x: i32, center_y: i32, radius: i32, color: Color);
+
+[symbol: "ImageDrawCircleLinesV"]
+pub extern def image_draw_circle_lines_v(dst: ref Image, center: Vector2, radius: i32, color: Color);
+
+[symbol: "ImageDrawRectangle"]
+pub extern def image_draw_rectangle(dst: ref Image, pos_x: i32, pos_y: i32, width: i32, height: i32, color: Color);
+
+[symbol: "ImageDrawRectangleV"]
+pub extern def image_draw_rectangle_v(dst: ref Image, position: Vector2, size: Vector2, color: Color);
+
+[symbol: "ImageDrawRectangleRec"]
+pub extern def image_draw_rectangle_rec(dst: ref Image, rec: Rectangle, color: Color);
+
+[symbol: "ImageDrawRectangleLines"]
+pub extern def image_draw_rectangle_lines(dst: ref Image, rec: Rectangle, thick: i32, color: Color);
+
+[symbol: "ImageDraw"]
+pub extern def image_draw(dst: ref Image, src: Image, src_rec: Rectangle, dst_rec: Rectangle, tint: Color);
+
+[symbol: "ImageDrawText"]
+pub extern def image_draw_text(dst: ref Image, text: ref char, pos_x: i32, pos_y: i32, font_size: i32, color: Color);
+
+[symbol: "ImageDrawTextEx"]
+pub extern def image_draw_text_ex(dst: ref Image, font: Font, text: ref char, position: Vector2, font_size: f32, spacing: f32, tint: Color);
+
+[symbol: "LoadTexture"]
+pub extern def load_texture(file_name: ref char): Texture;
+
+[symbol: "LoadTextureFromImage"]
+pub extern def load_texture_from_image(image: Image): Texture;
+
+[symbol: "LoadTextureCubemap"]
+pub extern def load_texture_cubemap(image: Image, layout: i32): Texture;
+
+[symbol: "LoadRenderTexture"]
+pub extern def load_render_texture(width: i32, height: i32): RenderTexture;
+
+[symbol: "IsTextureReady"]
+pub extern def is_texture_ready(texture: Texture): bool;
+
+[symbol: "UnloadTexture"]
+pub extern def unload_texture(texture: Texture);
+
+[symbol: "IsRenderTextureReady"]
+pub extern def is_render_texture_ready(target: RenderTexture): bool;
+
+[symbol: "UnloadRenderTexture"]
+pub extern def unload_render_texture(target: RenderTexture);
+
+[symbol: "UpdateTexture"]
+pub extern def update_texture(texture: Texture, pixels: usize);
+
+[symbol: "UpdateTextureRec"]
+pub extern def update_texture_rec(texture: Texture, rec: Rectangle, pixels: usize);
+
+[symbol: "GenTextureMipmaps"]
+pub extern def gen_texture_mipmaps(texture: ref Texture);
+
+[symbol: "SetTextureFilter"]
+pub extern def set_texture_filter(texture: Texture, filter: i32);
+
+[symbol: "SetTextureWrap"]
+pub extern def set_texture_wrap(texture: Texture, wrap: i32);
+
+[symbol: "DrawTexture"]
+pub extern def draw_texture(texture: Texture, pos_x: i32, pos_y: i32, tint: Color);
+
+[symbol: "DrawTextureV"]
+pub extern def draw_texture_v(texture: Texture, position: Vector2, tint: Color);
+
+[symbol: "DrawTextureEx"]
+pub extern def draw_texture_ex(texture: Texture, position: Vector2, rotation: f32, scale: f32, tint: Color);
+
+[symbol: "DrawTextureRec"]
+pub extern def draw_texture_rec(texture: Texture, source: Rectangle, position: Vector2, tint: Color);
+
+[symbol: "DrawTexturePro"]
+pub extern def draw_texture_pro(texture: Texture, source: Rectangle, dest: Rectangle, origin: Vector2, rotation: f32, tint: Color);
+
+[symbol: "DrawTextureNPatch"]
+pub extern def draw_texture_npatch(texture: Texture, n_patch_info: NPatchInfo, dest: Rectangle, origin: Vector2, rotation: f32, tint: Color);
+
+[symbol: "Fade"]
+pub extern def fade(color: Color, alpha: f32): Color;
+
+[symbol: "ColorToInt"]
+pub extern def color_to_int(color: Color): i32;
+
+[symbol: "ColorNormalize"]
+pub extern def color_normalize(color: Color): Vector4;
+
+[symbol: "ColorFromNormalized"]
+pub extern def color_from_normalized(normalized: Vector4): Color;
+
+[symbol: "ColorToHSV"]
+pub extern def color_to_hsv(color: Color): Vector3;
+
+[symbol: "ColorFromHSV"]
+pub extern def color_from_hsv(hue: f32, saturation: f32, value: f32): Color;
+
+[symbol: "ColorTint"]
+pub extern def color_tint(color: Color, tint: Color): Color;
+
+[symbol: "ColorBrightness"]
+pub extern def color_brightness(color: Color, factor: f32): Color;
+
+[symbol: "ColorContrast"]
+pub extern def color_contrast(color: Color, contrast: f32): Color;
+
+[symbol: "ColorAlpha"]
+pub extern def color_alpha(color: Color, alpha: f32): Color;
+
+[symbol: "ColorAlphaBlend"]
+pub extern def color_alpha_blend(dst: Color, src: Color, tint: Color): Color;
+
+[symbol: "GetColor"]
+pub extern def get_color(hex_value: u32): Color;
+
+[symbol: "GetPixelColor"]
+pub extern def get_pixel_color(src_ptr: usize, format: i32): Color;
+
+[symbol: "SetPixelColor"]
+pub extern def set_pixel_color(dst_ptr: usize, color: Color, format: i32);
+
+[symbol: "GetPixelDataSize"]
+pub extern def get_pixel_data_size(width: i32, height: i32, format: i32): i32;
+
+[symbol: "GetFontDefault"]
+pub extern def get_font_default(): Font;
+
+[symbol: "LoadFont"]
+pub extern def load_font(file_name: ref char): Font;
+
+[symbol: "LoadFontEx"]
+pub extern def load_font_ex(file_name: ref char, font_size: i32, codepoints: ref i32, codepoint_count: i32): Font;
+
+[symbol: "LoadFontFromImage"]
+pub extern def load_font_from_image(image: Image, key: Color, first_char: i32): Font;
+
+[symbol: "LoadFontFromMemory"]
+pub extern def load_font_from_memory(file_type: ref char, file_data: ref u8, data_size: i32, font_size: i32, codepoints: ref i32, codepoint_count: i32): Font;
+
+[symbol: "IsFontReady"]
+pub extern def is_font_ready(font: Font): bool;
+
+[symbol: "LoadFontData"]
+pub extern def load_font_data(file_data: ref u8, data_size: i32, font_size: i32, codepoints: ref i32, codepoint_count: i32, type: i32): ref GlyphInfo;
+
+[symbol: "GenImageFontAtlas"]
+pub extern def gen_image_font_atlas(glyphs: ref GlyphInfo, glyph_recs: ref ref Rectangle, glyph_count: i32, font_size: i32, padding: i32, pack_method: i32): Image;
+
+[symbol: "UnloadFontData"]
+pub extern def unload_font_data(glyphs: ref GlyphInfo, glyph_count: i32);
+
+[symbol: "UnloadFont"]
+pub extern def unload_font(font: Font);
+
+[symbol: "ExportFontAsCode"]
+pub extern def export_font_as_code(font: Font, file_name: ref char): bool;
+
+[symbol: "DrawFPS"]
+pub extern def draw_fps(pos_x: i32, pos_y: i32);
+
+[symbol: "DrawText"]
+pub extern def draw_text(text: ref char, pos_x: i32, pos_y: i32, font_size: i32, color: Color);
+
+[symbol: "DrawTextEx"]
+pub extern def draw_text_ex(font: Font, text: ref char, position: Vector2, font_size: f32, spacing: f32, tint: Color);
+
+[symbol: "DrawTextPro"]
+pub extern def draw_text_pro(font: Font, text: ref char, position: Vector2, origin: Vector2, rotation: f32, font_size: f32, spacing: f32, tint: Color);
+
+[symbol: "DrawTextCodepoint"]
+pub extern def draw_text_codepoint(font: Font, codepoint: i32, position: Vector2, font_size: f32, tint: Color);
+
+[symbol: "DrawTextCodepoints"]
+pub extern def draw_text_codepoints(font: Font, codepoints: ref i32, codepoint_count: i32, position: Vector2, font_size: f32, spacing: f32, tint: Color);
+
+[symbol: "SetTextLineSpacing"]
+pub extern def set_text_line_spacing(spacing: i32);
+
+[symbol: "MeasureText"]
+pub extern def measure_text(text: ref char, font_size: i32): i32;
+
+[symbol: "MeasureTextEx"]
+pub extern def measure_text_ex(font: Font, text: ref char, font_size: f32, spacing: f32): Vector2;
+
+[symbol: "GetGlyphIndex"]
+pub extern def get_glyph_index(font: Font, codepoint: i32): i32;
+
+[symbol: "GetGlyphInfo"]
+pub extern def get_glyph_info(font: Font, codepoint: i32): GlyphInfo;
+
+[symbol: "GetGlyphAtlasRec"]
+pub extern def get_glyph_atlas_rec(font: Font, codepoint: i32): Rectangle;
+
+[symbol: "LoadUTF8"]
+pub extern def load_utf8(codepoints: ref i32, length: i32): ref char;
+
+[symbol: "UnloadUTF8"]
+pub extern def unload_utf8(text: ref char);
+
+[symbol: "LoadCodepoints"]
+pub extern def load_codepoints(text: ref char, count: ref i32): ref i32;
+
+[symbol: "UnloadCodepoints"]
+pub extern def unload_codepoints(codepoints: ref i32);
+
+[symbol: "GetCodepointCount"]
+pub extern def get_codepoint_count(text: ref char): i32;
+
+[symbol: "GetCodepoint"]
+pub extern def get_codepoint(text: ref char, codepoint_size: ref i32): i32;
+
+[symbol: "GetCodepointNext"]
+pub extern def get_codepoint_next(text: ref char, codepoint_size: ref i32): i32;
+
+[symbol: "GetCodepointPrevious"]
+pub extern def get_codepoint_previous(text: ref char, codepoint_size: ref i32): i32;
+
+[symbol: "CodepointToUTF8"]
+pub extern def codepoint_to_utf8(codepoint: i32, utf8_size: ref i32): ref char;
+
+[symbol: "TextCopy"]
+pub extern def text_copy(dst: ref char, src: ref char): i32;
+
+[symbol: "TextIsEqual"]
+pub extern def text_is_equal(text1: ref char, text2: ref char): bool;
+
+[symbol: "TextLength"]
+pub extern def text_length(text: ref char): u32;
+
+[symbol: "TextFormat"]
+pub extern def text_format(text: ref char, ...): ref char;
+
+[symbol: "TextSubtext"]
+pub extern def text_subtext(text: ref char, position: i32, length: i32): ref char;
+
+[symbol: "TextReplace"]
+pub extern def text_replace(text: ref char, replace: ref char, by: ref char): ref char;
+
+[symbol: "TextInsert"]
+pub extern def text_insert(text: ref char, insert: ref char, position: i32): ref char;
+
+[symbol: "TextJoin"]
+pub extern def text_join(text_list: ref ref char, count: i32, delimiter: ref char): ref char;
+
+[symbol: "TextSplit"]
+pub extern def text_split(text: ref char, delimiter: char, count: ref i32): ref ref char;
+
+[symbol: "TextAppend"]
+pub extern def text_append(text: ref char, append: ref char, position: ref i32);
+
+[symbol: "TextFindIndex"]
+pub extern def text_find_index(text: ref char, find: ref char): i32;
+
+[symbol: "TextToUpper"]
+pub extern def text_to_upper(text: ref char): ref char;
+
+[symbol: "TextToLower"]
+pub extern def text_to_lower(text: ref char): ref char;
+
+[symbol: "TextToPascal"]
+pub extern def text_to_pascal(text: ref char): ref char;
+
+[symbol: "TextToInteger"]
+pub extern def text_to_integer(text: ref char): i32;
+
+[symbol: "DrawLine3D"]
+pub extern def draw_line_3d(start_pos: Vector3, end_pos: Vector3, color: Color);
+
+[symbol: "DrawPoint3D"]
+pub extern def draw_point_3d(position: Vector3, color: Color);
+
+[symbol: "DrawCircle3D"]
+pub extern def draw_circle_3d(center: Vector3, radius: f32, rotation_axis: Vector3, rotation_angle: f32, color: Color);
+
+[symbol: "DrawTriangle3D"]
+pub extern def draw_triangle_3d(v1: Vector3, v2: Vector3, v3: Vector3, color: Color);
+
+[symbol: "DrawTriangleStrip3D"]
+pub extern def draw_triangle_strip_3d(points: ref Vector3, point_count: i32, color: Color);
+
+[symbol: "DrawCube"]
+pub extern def draw_cube(position: Vector3, width: f32, height: f32, length: f32, color: Color);
+
+[symbol: "DrawCubeV"]
+pub extern def draw_cube_v(position: Vector3, size: Vector3, color: Color);
+
+[symbol: "DrawCubeWires"]
+pub extern def draw_cube_wires(position: Vector3, width: f32, height: f32, length: f32, color: Color);
+
+[symbol: "DrawCubeWiresV"]
+pub extern def draw_cube_wires_v(position: Vector3, size: Vector3, color: Color);
+
+[symbol: "DrawSphere"]
+pub extern def draw_sphere(center_pos: Vector3, radius: f32, color: Color);
+
+[symbol: "DrawSphereEx"]
+pub extern def draw_sphere_ex(center_pos: Vector3, radius: f32, rings: i32, slices: i32, color: Color);
+
+[symbol: "DrawSphereWires"]
+pub extern def draw_sphere_wires(center_pos: Vector3, radius: f32, rings: i32, slices: i32, color: Color);
+
+[symbol: "DrawCylinder"]
+pub extern def draw_cylinder(position: Vector3, radius_top: f32, radius_bottom: f32, height: f32, slices: i32, color: Color);
+
+[symbol: "DrawCylinderEx"]
+pub extern def draw_cylinder_ex(start_pos: Vector3, end_pos: Vector3, start_radius: f32, end_radius: f32, sides: i32, color: Color);
+
+[symbol: "DrawCylinderWires"]
+pub extern def draw_cylinder_wires(position: Vector3, radius_top: f32, radius_bottom: f32, height: f32, slices: i32, color: Color);
+
+[symbol: "DrawCylinderWiresEx"]
+pub extern def draw_cylinder_wires_ex(start_pos: Vector3, end_pos: Vector3, start_radius: f32, end_radius: f32, sides: i32, color: Color);
+
+[symbol: "DrawCapsule"]
+pub extern def draw_capsule(start_pos: Vector3, end_pos: Vector3, radius: f32, slices: i32, rings: i32, color: Color);
+
+[symbol: "DrawCapsuleWires"]
+pub extern def draw_capsule_wires(start_pos: Vector3, end_pos: Vector3, radius: f32, slices: i32, rings: i32, color: Color);
+
+[symbol: "DrawPlane"]
+pub extern def draw_plane(center_pos: Vector3, size: Vector2, color: Color);
+
+[symbol: "DrawRay"]
+pub extern def draw_ray(ray: Ray, color: Color);
+
+[symbol: "DrawGrid"]
+pub extern def draw_grid(slices: i32, spacing: f32);
+
+[symbol: "LoadModel"]
+pub extern def load_model(file_name: ref char): Model;
+
+[symbol: "LoadModelFromMesh"]
+pub extern def load_model_from_mesh(mesh: Mesh): Model;
+
+[symbol: "IsModelReady"]
+pub extern def is_model_ready(model: Model): bool;
+
+[symbol: "UnloadModel"]
+pub extern def unload_model(model: Model);
+
+[symbol: "GetModelBoundingBox"]
+pub extern def get_model_bounding_box(model: Model): BoundingBox;
+
+[symbol: "DrawModel"]
+pub extern def draw_model(model: Model, position: Vector3, scale: f32, tint: Color);
+
+[symbol: "DrawModelEx"]
+pub extern def draw_model_ex(model: Model, position: Vector3, rotation_axis: Vector3, rotation_angle: f32, scale: Vector3, tint: Color);
+
+[symbol: "DrawModelWires"]
+pub extern def draw_model_wires(model: Model, position: Vector3, scale: f32, tint: Color);
+
+[symbol: "DrawModelWiresEx"]
+pub extern def draw_model_wires_ex(model: Model, position: Vector3, rotation_axis: Vector3, rotation_angle: f32, scale: Vector3, tint: Color);
+
+[symbol: "DrawBoundingBox"]
+pub extern def draw_bounding_box(box: BoundingBox, color: Color);
+
+[symbol: "DrawBillboard"]
+pub extern def draw_billboard(camera: Camera3D, texture: Texture, position: Vector3, size: f32, tint: Color);
+
+[symbol: "DrawBillboardRec"]
+pub extern def draw_billboard_rec(camera: Camera3D, texture: Texture, source: Rectangle, position: Vector3, size: Vector2, tint: Color);
+
+[symbol: "DrawBillboardPro"]
+pub extern def draw_billboard_pro(camera: Camera3D, texture: Texture, source: Rectangle, position: Vector3, up: Vector3, size: Vector2, origin: Vector2, rotation: f32, tint: Color);
+
+[symbol: "UploadMesh"]
+pub extern def upload_mesh(mesh: ref Mesh, dynamic: bool);
+
+[symbol: "UpdateMeshBuffer"]
+pub extern def update_mesh_buffer(mesh: Mesh, index: i32, data: usize, data_size: i32, offset: i32);
+
+[symbol: "UnloadMesh"]
+pub extern def unload_mesh(mesh: Mesh);
+
+[symbol: "DrawMesh"]
+pub extern def draw_mesh(mesh: Mesh, material: Material, transform: Matrix);
+
+[symbol: "DrawMeshInstanced"]
+pub extern def draw_mesh_instanced(mesh: Mesh, material: Material, transforms: ref Matrix, instances: i32);
+
+[symbol: "ExportMesh"]
+pub extern def export_mesh(mesh: Mesh, file_name: ref char): bool;
+
+[symbol: "GetMeshBoundingBox"]
+pub extern def get_mesh_bounding_box(mesh: Mesh): BoundingBox;
+
+[symbol: "GenMeshTangents"]
+pub extern def gen_mesh_tangents(mesh: ref Mesh);
+
+[symbol: "GenMeshPoly"]
+pub extern def gen_mesh_poly(sides: i32, radius: f32): Mesh;
+
+[symbol: "GenMeshPlane"]
+pub extern def gen_mesh_plane(width: f32, length: f32, res_x: i32, res_z: i32): Mesh;
+
+[symbol: "GenMeshCube"]
+pub extern def gen_mesh_cube(width: f32, height: f32, length: f32): Mesh;
+
+[symbol: "GenMeshSphere"]
+pub extern def gen_mesh_sphere(radius: f32, rings: i32, slices: i32): Mesh;
+
+[symbol: "GenMeshHemiSphere"]
+pub extern def gen_mesh_hemi_sphere(radius: f32, rings: i32, slices: i32): Mesh;
+
+[symbol: "GenMeshCylinder"]
+pub extern def gen_mesh_cylinder(radius: f32, height: f32, slices: i32): Mesh;
+
+[symbol: "GenMeshCone"]
+pub extern def gen_mesh_cone(radius: f32, height: f32, slices: i32): Mesh;
+
+[symbol: "GenMeshTorus"]
+pub extern def gen_mesh_torus(radius: f32, size: f32, rad_seg: i32, sides: i32): Mesh;
+
+[symbol: "GenMeshKnot"]
+pub extern def gen_mesh_knot(radius: f32, size: f32, rad_seg: i32, sides: i32): Mesh;
+
+[symbol: "GenMeshHeightmap"]
+pub extern def gen_mesh_heightmap(heightmap: Image, size: Vector3): Mesh;
+
+[symbol: "GenMeshCubicmap"]
+pub extern def gen_mesh_cubicmap(cubicmap: Image, cube_size: Vector3): Mesh;
+
+[symbol: "LoadMaterials"]
+pub extern def load_materials(file_name: ref char, material_count: ref i32): ref Material;
+
+[symbol: "LoadMaterialDefault"]
+pub extern def load_material_default(): Material;
+
+[symbol: "IsMaterialReady"]
+pub extern def is_material_ready(material: Material): bool;
+
+[symbol: "UnloadMaterial"]
+pub extern def unload_material(material: Material);
+
+[symbol: "SetMaterialTexture"]
+pub extern def set_material_texture(material: ref Material, map_type: i32, texture: Texture);
+
+[symbol: "SetModelMeshMaterial"]
+pub extern def set_model_mesh_material(model: ref Model, mesh_id: i32, material_id: i32);
+
+[symbol: "LoadModelAnimations"]
+pub extern def load_model_animations(file_name: ref char, anim_count: ref i32): ref ModelAnimation;
+
+[symbol: "UpdateModelAnimation"]
+pub extern def update_model_animation(model: Model, anim: ModelAnimation, frame: i32);
+
+[symbol: "UnloadModelAnimation"]
+pub extern def unload_model_animation(anim: ModelAnimation);
+
+[symbol: "UnloadModelAnimations"]
+pub extern def unload_model_animations(animations: ref ModelAnimation, anim_count: i32);
+
+[symbol: "IsModelAnimationValid"]
+pub extern def is_model_animation_valid(model: Model, anim: ModelAnimation): bool;
+
+[symbol: "CheckCollisionSpheres"]
+pub extern def check_collision_spheres(center1: Vector3, radius1: f32, center2: Vector3, radius2: f32): bool;
+
+[symbol: "CheckCollisionBoxes"]
+pub extern def check_collision_boxes(box1: BoundingBox, box2: BoundingBox): bool;
+
+[symbol: "CheckCollisionBoxSphere"]
+pub extern def check_collision_box_sphere(box: BoundingBox, center: Vector3, radius: f32): bool;
+
+[symbol: "GetRayCollisionSphere"]
+pub extern def get_ray_collision_sphere(ray: Ray, center: Vector3, radius: f32): RayCollision;
+
+[symbol: "GetRayCollisionBox"]
+pub extern def get_ray_collision_box(ray: Ray, box: BoundingBox): RayCollision;
+
+[symbol: "GetRayCollisionMesh"]
+pub extern def get_ray_collision_mesh(ray: Ray, mesh: Mesh, transform: Matrix): RayCollision;
+
+[symbol: "GetRayCollisionTriangle"]
+pub extern def get_ray_collision_triangle(ray: Ray, p1: Vector3, p2: Vector3, p3: Vector3): RayCollision;
+
+[symbol: "GetRayCollisionQuad"]
+pub extern def get_ray_collision_quad(ray: Ray, p1: Vector3, p2: Vector3, p3: Vector3, p4: Vector3): RayCollision;
+
+[symbol: "InitAudioDevice"]
+pub extern def init_audio_device();
+
+[symbol: "CloseAudioDevice"]
+pub extern def close_audio_device();
+
+[symbol: "IsAudioDeviceReady"]
+pub extern def is_audio_device_ready(): bool;
+
+[symbol: "SetMasterVolume"]
+pub extern def set_master_volume(volume: f32);
+
+[symbol: "GetMasterVolume"]
+pub extern def get_master_volume(): f32;
+
+[symbol: "LoadWave"]
+pub extern def load_wave(file_name: ref char): Wave;
+
+[symbol: "LoadWaveFromMemory"]
+pub extern def load_wave_from_memory(file_type: ref char, file_data: ref u8, data_size: i32): Wave;
+
+[symbol: "IsWaveReady"]
+pub extern def is_wave_ready(wave: Wave): bool;
+
+[symbol: "LoadSound"]
+pub extern def load_sound(file_name: ref char): Sound;
+
+[symbol: "LoadSoundFromWave"]
+pub extern def load_sound_from_wave(wave: Wave): Sound;
+
+[symbol: "LoadSoundAlias"]
+pub extern def load_sound_alias(source: Sound): Sound;
+
+[symbol: "IsSoundReady"]
+pub extern def is_sound_ready(sound: Sound): bool;
+
+[symbol: "UpdateSound"]
+pub extern def update_sound(sound: Sound, data: usize, sample_count: i32);
+
+[symbol: "UnloadWave"]
+pub extern def unload_wave(wave: Wave);
+
+[symbol: "UnloadSound"]
+pub extern def unload_sound(sound: Sound);
+
+[symbol: "UnloadSoundAlias"]
+pub extern def unload_sound_alias(alias: Sound);
+
+[symbol: "ExportWave"]
+pub extern def export_wave(wave: Wave, file_name: ref char): bool;
+
+[symbol: "ExportWaveAsCode"]
+pub extern def export_wave_as_code(wave: Wave, file_name: ref char): bool;
+
+[symbol: "PlaySound"]
+pub extern def play_sound(sound: Sound);
+
+[symbol: "StopSound"]
+pub extern def stop_sound(sound: Sound);
+
+[symbol: "PauseSound"]
+pub extern def pause_sound(sound: Sound);
+
+[symbol: "ResumeSound"]
+pub extern def resume_sound(sound: Sound);
+
+[symbol: "IsSoundPlaying"]
+pub extern def is_sound_playing(sound: Sound): bool;
+
+[symbol: "SetSoundVolume"]
+pub extern def set_sound_volume(sound: Sound, volume: f32);
+
+[symbol: "SetSoundPitch"]
+pub extern def set_sound_pitch(sound: Sound, pitch: f32);
+
+[symbol: "SetSoundPan"]
+pub extern def set_sound_pan(sound: Sound, pan: f32);
+
+[symbol: "WaveCopy"]
+pub extern def wave_copy(wave: Wave): Wave;
+
+[symbol: "WaveCrop"]
+pub extern def wave_crop(wave: ref Wave, init_sample: i32, final_sample: i32);
+
+[symbol: "WaveFormat"]
+pub extern def wave_format(wave: ref Wave, sample_rate: i32, sample_size: i32, channels: i32);
+
+[symbol: "LoadWaveSamples"]
+pub extern def load_wave_samples(wave: Wave): ref f32;
+
+[symbol: "UnloadWaveSamples"]
+pub extern def unload_wave_samples(samples: ref f32);
+
+[symbol: "LoadMusicStream"]
+pub extern def load_music_stream(file_name: ref char): Music;
+
+[symbol: "LoadMusicStreamFromMemory"]
+pub extern def load_music_stream_from_memory(file_type: ref char, data: ref u8, data_size: i32): Music;
+
+[symbol: "IsMusicReady"]
+pub extern def is_music_ready(music: Music): bool;
+
+[symbol: "UnloadMusicStream"]
+pub extern def unload_music_stream(music: Music);
+
+[symbol: "PlayMusicStream"]
+pub extern def play_music_stream(music: Music);
+
+[symbol: "IsMusicStreamPlaying"]
+pub extern def is_music_stream_playing(music: Music): bool;
+
+[symbol: "UpdateMusicStream"]
+pub extern def update_music_stream(music: Music);
+
+[symbol: "StopMusicStream"]
+pub extern def stop_music_stream(music: Music);
+
+[symbol: "PauseMusicStream"]
+pub extern def pause_music_stream(music: Music);
+
+[symbol: "ResumeMusicStream"]
+pub extern def resume_music_stream(music: Music);
+
+[symbol: "SeekMusicStream"]
+pub extern def seek_music_stream(music: Music, position: f32);
+
+[symbol: "SetMusicVolume"]
+pub extern def set_music_volume(music: Music, volume: f32);
+
+[symbol: "SetMusicPitch"]
+pub extern def set_music_pitch(music: Music, pitch: f32);
+
+[symbol: "SetMusicPan"]
+pub extern def set_music_pan(music: Music, pan: f32);
+
+[symbol: "GetMusicTimeLength"]
+pub extern def get_music_time_length(music: Music): f32;
+
+[symbol: "GetMusicTimePlayed"]
+pub extern def get_music_time_played(music: Music): f32;
+
+[symbol: "LoadAudioStream"]
+pub extern def load_audio_stream(sample_rate: u32, sample_size: u32, channels: u32): AudioStream;
+
+[symbol: "IsAudioStreamReady"]
+pub extern def is_audio_stream_ready(stream: AudioStream): bool;
+
+[symbol: "UnloadAudioStream"]
+pub extern def unload_audio_stream(stream: AudioStream);
+
+[symbol: "UpdateAudioStream"]
+pub extern def update_audio_stream(stream: AudioStream, data: usize, frame_count: i32);
+
+[symbol: "IsAudioStreamProcessed"]
+pub extern def is_audio_stream_processed(stream: AudioStream): bool;
+
+[symbol: "PlayAudioStream"]
+pub extern def play_audio_stream(stream: AudioStream);
+
+[symbol: "PauseAudioStream"]
+pub extern def pause_audio_stream(stream: AudioStream);
+
+[symbol: "ResumeAudioStream"]
+pub extern def resume_audio_stream(stream: AudioStream);
+
+[symbol: "IsAudioStreamPlaying"]
+pub extern def is_audio_stream_playing(stream: AudioStream): bool;
+
+[symbol: "StopAudioStream"]
+pub extern def stop_audio_stream(stream: AudioStream);
+
+[symbol: "SetAudioStreamVolume"]
+pub extern def set_audio_stream_volume(stream: AudioStream, volume: f32);
+
+[symbol: "SetAudioStreamPitch"]
+pub extern def set_audio_stream_pitch(stream: AudioStream, pitch: f32);
+
+[symbol: "SetAudioStreamPan"]
+pub extern def set_audio_stream_pan(stream: AudioStream, pan: f32);
+
+[symbol: "SetAudioStreamBufferSizeDefault"]
+pub extern def set_audio_stream_buffer_size_default(size: i32);
+
+[symbol: "SetAudioStreamCallback"]
+pub extern def set_audio_stream_callback(stream: AudioStream, callback: usize);
+
+[symbol: "AttachAudioStreamProcessor"]
+pub extern def attach_audio_stream_processor(stream: AudioStream, processor: usize);
+
+[symbol: "DetachAudioStreamProcessor"]
+pub extern def detach_audio_stream_processor(stream: AudioStream, processor: usize);
+
+[symbol: "AttachAudioMixedProcessor"]
+pub extern def attach_audio_mixed_processor(processor: usize);
+
+[symbol: "DetachAudioMixedProcessor"]
+pub extern def detach_audio_mixed_processor(processor: usize);
