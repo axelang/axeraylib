@@ -79,6 +79,7 @@ pub extern def toggle_fullscreen();
 
 [symbol: "ToggleBorderlessWindowed"]
 pub extern def toggle_borderless_windowed();
+
 [symbol: "MaximizeWindow"]
 pub extern def maximize_window();
 
