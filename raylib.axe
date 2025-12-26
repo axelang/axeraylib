@@ -1,12 +1,12 @@
 use external("raylib.h");
 
-opaque { 
+foreign { 
     Vector2, Vector3, Vector4, Matrix, Color, Rectangle, 
     Image, Texture, RenderTexture, NPatchInfo, GlyphInfo, 
     Font, Camera3D, Camera2D, Mesh, Shader, MaterialMap, Material, 
     Transform, BoneInfo, Model, ModelAnimation, Ray, RayCollision, 
     BoundingBox, Wave, AudioStream, Sound, Music 
-};
+}
 
 pub def LIGHTGRAY(): Color { mut c: Color; unsafe { c.r = 200; c.g = 200; c.b = 200; c.a = 255; } return c; }
 pub def GRAY(): Color { mut c: Color; unsafe { c.r = 130; c.g = 130; c.b = 130; c.a = 255; } return c; }
